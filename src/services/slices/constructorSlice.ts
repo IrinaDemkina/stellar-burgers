@@ -3,6 +3,7 @@ import { TConstructorIngredient, TOrder } from '@utils-types';
 import type { RootState } from '../store';
 import { orderBurgerApi } from '@api';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { nanoid } from '@reduxjs/toolkit';
 
 interface IConstructorState {
   bun: TConstructorIngredient | null;
@@ -39,12 +40,12 @@ export const constructorSlice = createSlice({
       if (action.payload.type === 'bun') {
         state.bun = action.payload;
       } else {
-        state.ingredients.push(action.payload);
+        state.ingredients.push({ ...action.payload, id: nanoid() });
       }
     },
     removeIngredient: (state, action: PayloadAction<string>) => {
       state.ingredients = state.ingredients.filter(
-        (ingredient) => ingredient._id !== action.payload
+        (ingredient) => ingredient.id !== action.payload
       );
     },
     moveIngredient: (

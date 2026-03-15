@@ -28,7 +28,7 @@ const App = () => {
   /** TODO: взять переменные из стора */
   const location = useLocation();
   const navigate = useNavigate();
-  const background = location.state?.background;
+  const background = (location.state as { background?: Location })?.background;
   const dispatch = useDispatch();
 
   useEffect(() => {
