@@ -8,19 +8,36 @@ import {
   initialUserState
 } from './userSlice';
 import { TUser } from '@utils-types';
+const requestId = 'reqId';
 const mockUser: TUser = { name: 'Test', email: 'test@test.com' };
-const mockUserUpdated = { name: 'Updated', email: 'test@test.com' };
+const mockUserUpdated: TUser = { name: 'Updated', email: 'test@test.com' };
+
+const loginPayload = { email: mockUser.email, password: 'password' };
+const registerPayload = { ...loginPayload, name: mockUser.name };
+const updatePayload = { name: mockUserUpdated.name, email: mockUser.email };
+
+const authResponse = {
+  success: true,
+  user: mockUser,
+  accessToken: '',
+  refreshToken: ''
+};
+const authUpdatedResponse = { success: true, user: mockUserUpdated };
 
 describe('userSlice', () => {
   describe('checkUserAuth', () => {
     it('pending: состояние не меняется (нет handler)', () => {
-      const action = checkUserAuth.pending();
+      const action = checkUserAuth.pending(requestId, undefined);
       const state = userReducer(initialUserState, action);
       expect(state).toEqual(initialUserState);
     });
 
     it('fulfilled: устанавливает пользователя и авторизацию', () => {
-      const action = checkUserAuth.fulfilled({ user: mockUser });
+      const action = checkUserAuth.fulfilled(
+        authResponse,
+        requestId,
+        undefined
+      );
       const state = userReducer(initialUserState, action);
       expect(state).toEqual({
         ...initialUserState,
@@ -31,7 +48,11 @@ describe('userSlice', () => {
     });
 
     it('rejected: проверяет авторизацию без пользователя', () => {
-      const action = checkUserAuth.rejected();
+      const action = checkUserAuth.rejected(
+        new Error('Auth error'),
+        requestId,
+        undefined
+      );
       const state = userReducer(initialUserState, action);
       expect(state).toEqual({
         ...initialUserState,
@@ -43,7 +64,7 @@ describe('userSlice', () => {
 
   describe('loginUser & registerUser', () => {
     it('loginUser.fulfilled: авторизует', () => {
-      const action = loginUser.fulfilled({ user: mockUser });
+      const action = loginUser.fulfilled(authResponse, requestId, loginPayload);
       const state = userReducer(initialUserState, action);
       expect(state).toEqual({
         ...initialUserState,
@@ -54,7 +75,11 @@ describe('userSlice', () => {
     });
 
     it('loginUser.rejected: сохраняет ошибку', () => {
-      const action = loginUser.rejected(new Error('Login failed'));
+      const action = loginUser.rejected(
+        new Error('Login failed'),
+        requestId,
+        loginPayload
+      );
       const state = userReducer(initialUserState, action);
       expect(state).toEqual({
         ...initialUserState,
@@ -63,7 +88,11 @@ describe('userSlice', () => {
     });
 
     it('registerUser.fulfilled: регистрирует (аналогично login)', () => {
-      const action = registerUser.fulfilled({ user: mockUser });
+      const action = registerUser.fulfilled(
+        authResponse,
+        requestId,
+        registerPayload
+      );
       const state = userReducer(initialUserState, action);
       expect(state).toEqual({
         ...initialUserState,
@@ -78,9 +107,13 @@ describe('userSlice', () => {
     it('fulfilled: обновляет пользователя', () => {
       const stateWithUser = userReducer(
         initialUserState,
-        checkUserAuth.fulfilled({ user: mockUser })
+        checkUserAuth.fulfilled(authResponse, requestId, undefined)
       );
-      const action = updateUser.fulfilled({ user: mockUserUpdated });
+      const action = updateUser.fulfilled(
+        authUpdatedResponse,
+        requestId,
+        updatePayload
+      );
       const state = userReducer(stateWithUser, action);
       expect(state.user).toEqual(mockUserUpdated);
     });
@@ -90,9 +123,9 @@ describe('userSlice', () => {
     it('fulfilled: сбрасывает авторизацию', () => {
       const stateWithUser = userReducer(
         initialUserState,
-        loginUser.fulfilled({ user: mockUser })
+        loginUser.fulfilled(authResponse, requestId, loginPayload)
       );
-      const action = logoutUser.fulfilled();
+      const action = logoutUser.fulfilled(undefined, requestId, undefined);
       const state = userReducer(stateWithUser, action);
       expect(state).toEqual({
         ...initialUserState,

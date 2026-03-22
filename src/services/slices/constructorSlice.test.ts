@@ -12,8 +12,9 @@ import {
   createOrder,
   initialConstructorState
 } from './constructorSlice';
+
 import { TConstructorIngredient } from '@utils-types';
-import { TConstructorIngredient } from '@utils-types';
+
 const mockBun: TConstructorIngredient = {
   _id: '643d69a5c3f7b9001cfa093c',
   name: 'Краторная булка N-200i',
@@ -25,7 +26,8 @@ const mockBun: TConstructorIngredient = {
   price: 1255,
   image: 'https://code.s3.yandex.net/react/code/bun-02.png',
   image_large: 'https://code.s3.yandex.net/react/code/bun-02-large.png',
-  image_mobile: 'https://code.s3.yandex.net/react/code/bun-02-mobile.png'
+  image_mobile: 'https://code.s3.yandex.net/react/code/bun-02-mobile.png',
+  id: 'bun-test-id'
 };
 export const mockSauce: TConstructorIngredient = {
   _id: '643d69a5c3f7b9001cfa0942',
@@ -38,7 +40,8 @@ export const mockSauce: TConstructorIngredient = {
   price: 90,
   image: 'https://code.s3.yandex.net/react/code/sauce-01.png',
   image_mobile: 'https://code.s3.yandex.net/react/code/sauce-01-mobile.png',
-  image_large: 'https://code.s3.yandex.net/react/code/sauce-01-large.png'
+  image_large: 'https://code.s3.yandex.net/react/code/sauce-01-large.png',
+  id: 'sauce-test-id'
 };
 export const mockOrder = { number: 123, name: 'Test Order' };
 
@@ -60,10 +63,9 @@ describe('constructorSlice', () => {
     });
 
     it('removeIngredient: удаляет по id', () => {
-      const ingWithId = { ...mockSauce };
       const stateWithIng = constructorReducer(
         undefined,
-        addIngredient(ingWithId)
+        addIngredient({ ...mockSauce })
       );
       const state = constructorReducer(
         stateWithIng,
@@ -101,15 +103,17 @@ describe('constructorSlice', () => {
 
   describe('extraReducers (createOrder)', () => {
     it('pending: orderRequest = true', () => {
-      const state = constructorReducer(
-        initialConstructorState,
-        createOrder.pending()
-      );
+      const action = createOrder.pending('reqId', [] as string[]);
+      const state = constructorReducer(initialConstructorState, action);
       expect(state.orderRequest).toBe(true);
     });
 
     it('fulfilled: сбрасывает запрос, сохраняет order, очищает конструктор', () => {
-      const action = createOrder.fulfilled({ order: mockOrder }, 'reqId', []);
+      const action = createOrder.fulfilled(
+        { order: mockOrder } as any,
+        'reqId',
+        [] as string[]
+      );
       const state = constructorReducer(initialConstructorState, action);
       expect(state).toEqual({
         ...initialConstructorState,
@@ -121,10 +125,12 @@ describe('constructorSlice', () => {
     });
 
     it('rejected: сбрасывает orderRequest', () => {
-      const state = constructorReducer(
-        initialConstructorState,
-        createOrder.rejected()
+      const action = createOrder.rejected(
+        new Error('Order failed') as any,
+        'reqId',
+        [] as string[]
       );
+      const state = constructorReducer(initialConstructorState, action);
       expect(state.orderRequest).toBe(false);
     });
   });

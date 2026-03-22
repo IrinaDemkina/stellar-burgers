@@ -4,6 +4,8 @@ import {
   initialIngredientsState
 } from './ingredientsSlice';
 import { TIngredient } from '@utils-types';
+
+const requestId = 'reqId';
 const mockIngredients: TIngredient[] = [
   {
     _id: '643d69a5c3f7b9001cfa093c',
@@ -23,7 +25,7 @@ const mockIngredients: TIngredient[] = [
 describe('ingredientsSlice', () => {
   describe('fetchIngredients.pending', () => {
     it('устанавливает isLoading=true и сбрасывает error', () => {
-      const action = fetchIngredients.pending();
+      const action = fetchIngredients.pending(requestId, undefined);
       const state = ingredientsReducer(initialIngredientsState, action);
       expect(state).toEqual({
         ...initialIngredientsState,
@@ -35,7 +37,11 @@ describe('ingredientsSlice', () => {
 
   describe('fetchIngredients.fulfilled', () => {
     it('сохраняет ингредиенты и сбрасывает isLoading', () => {
-      const action = fetchIngredients.fulfilled(mockIngredients);
+      const action = fetchIngredients.fulfilled(
+        mockIngredients,
+        requestId,
+        undefined
+      );
       const state = ingredientsReducer(initialIngredientsState, action);
       expect(state).toEqual({
         ...initialIngredientsState,
@@ -52,7 +58,11 @@ describe('ingredientsSlice', () => {
         ...initialIngredientsState,
         isLoading: true
       };
-      const action = fetchIngredients.rejected(new Error('Network error'));
+      const action = fetchIngredients.rejected(
+        new Error('Network error'),
+        requestId,
+        undefined
+      );
       const state = ingredientsReducer(loadingState, action);
       expect(state).toEqual({
         ...initialIngredientsState,

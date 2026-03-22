@@ -1,9 +1,9 @@
 import { rootReducer } from './store';
 
 describe('rootReducer', () => {
-  it('проверяем правильно ли инициализируются все слайсы', () => {
-    const initialState = rootReducer(undefined, { type: '@@redux/INIT' });
+  const initialState = rootReducer(undefined, { type: '@@redux/INIT' });
 
+  it('проверяем правильно ли инициализируются все слайсы', () => {
     expect(initialState.ingredients.ingredients).toEqual([]);
     expect(initialState.ingredients.isLoading).toBe(false);
     expect(initialState.ingredients.error).toBeNull();
