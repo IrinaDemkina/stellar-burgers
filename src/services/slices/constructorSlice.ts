@@ -104,3 +104,4 @@ export const selectOrderRequest = (state: RootState) =>
   state.burger.orderRequest;
 export const selectOrderModalData = (state: RootState) =>
   state.burger.orderModalData;
+export const initialConstructorState = initialState;

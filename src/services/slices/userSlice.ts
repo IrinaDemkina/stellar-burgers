@@ -111,3 +111,4 @@ export const selectIsAuthChecked = (state: RootState) =>
 export const selectUserError = (state: RootState) => state.user.error;
 
 export const userReducer = userSlice.reducer;
+export const initialUserState = initialState;

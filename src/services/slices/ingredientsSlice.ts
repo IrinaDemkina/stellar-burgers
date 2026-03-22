@@ -47,3 +47,4 @@ export const selectIngredientsLoading = (state: RootState) =>
   state.ingredients.isLoading;
 
 export const ingredientsReducer = ingredientsSlice.reducer;
+export const initialIngredientsState = initialState;

@@ -97,3 +97,4 @@ export const selectCurrentOrderLoading = (state: RootState) =>
 export const selectCurrentOrderError = (state: RootState) =>
   state.feed.currentOrderError;
 export const feedReducer = feedSlice.reducer;
+export const initialFeedState = initialState;
