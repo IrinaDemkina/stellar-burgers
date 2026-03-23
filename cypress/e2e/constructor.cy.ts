@@ -14,6 +14,11 @@ describe('Проверка работы конструктора бургера'
     cy.get(`[data-cy="${MAIN_ID}"]`).as('main');
   });
 
+  afterEach(() => {
+    cy.clearCookies();
+    cy.clearLocalStorage();
+  });
+
   describe('Тестирование модальных окон', () => {
     it('открытие и закрытие модалки ингредиента', () => {
       cy.get('@bun').click();
@@ -27,6 +32,20 @@ describe('Проверка работы конструктора бургера'
       cy.get('@bun').click();
       cy.get('[data-cy="modal-overlay"]').click({ force: true });
       cy.get('[data-cy="modal"]').should('not.exist');
+    });
+  });
+
+  describe('Работа с ингредиентами', () => {
+    it('добавление булки и основного ингредиента в конструктор', () => {
+      cy.get('[data-cy="top-bun-empty"]').should('exist');
+      cy.get('[data-cy="ingredients-empty"]').should('exist');
+
+      cy.get('@bun').find('button').contains('Добавить').click();
+      cy.get('@main').find('button').contains('Добавить').click();
+
+      cy.get('[data-cy="constructor-bun-top"]').should('contain', 'Краторная булка N-200i');
+      cy.get('[data-cy="constructor-bun-bottom"]').should('contain', 'Краторная булка N-200i');
+      cy.get('[data-cy="constructor-ingredients"]').should('contain', 'Биокотлета из марсианской Магнолии');
     });
   });
 
