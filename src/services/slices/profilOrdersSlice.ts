@@ -47,3 +47,4 @@ export const selectProfileOrdersLoading = (state: RootState) =>
   state.profileOrders.isLoading;
 
 export const profileOrdersReducer = profileOrdersSlice.reducer;
+export const initialProfileOrdersState = initialState;
